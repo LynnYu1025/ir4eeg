@@ -1,1 +1,32 @@
+// E18-D50NK IR light barrier + Arduino 
+// 
+//---------------------------------------------------------------------------------------------------------------
 
+int analogPin = A0; // set sensor input pin 
+int digitalPinEEG = 2; // set ttl output (digtal) pin 
+
+int val = 0;  // create a variable for reading the input signal
+const int thres = 400; // set a threshold for the change of input signal  
+const int ttl_delay = 50; // set ttl length
+
+void setup() {
+  Serial.begin(9600);           //  setup serial, Baud rate = 9600 bit/second between arduino and computer 
+  pinMode(digitalPinEEG, OUTPUT); // 
+}
+
+void loop() {
+  val = analogRead(analogPin);  // read the input signal
+  Serial.println(val);          // debug value = Serial monitor will show val 
+
+  if (val<thres) {
+    digitalWrite(digitalPinEEG, HIGH); // sets the digital pin on = turn on
+    delay(ttl_delay);            // waits for ttt_delay in ms, ttl length
+    digitalWrite(digitalPinEEG, LOW);  // sets the digital pin off = turn off
+    //delay(1000);            // waits for a second, comment this in to make the arduino insensitive to new signals for a certain period
+    // wait for signal to go above threshold again
+    do {
+      // statement block
+      val = analogRead(analogPin);
+    } while (val<thres); // check and repeat
+  }
+}
